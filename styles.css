@@ -1,0 +1,131 @@
+:root {
+  --accent: #006666;
+  --box-width: 90;
+  --box-height: 90;
+  --padding-inside: 40px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: url('library bg.png') no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.main-container {
+  width: calc(var(--box-width) * 1vw);
+  height: calc(var(--box-height) * 1vh);
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: var(--padding-inside);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+header { text-align: center; margin-bottom: 20px; }
+
+.logo-name { display: flex; align-items: center; justify-content: center; gap: 12px; }
+.logo { width: 50px; height: 50px; object-fit: contain; }
+
+.name-location h1 { margin:0; font-size:26px; color: var(--accent); }
+.name-location p { margin:0; font-size:16px; color:#555; }
+
+nav ul { display:flex; justify-content:center; list-style:none; gap:20px; padding:0; margin-top:10px; }
+nav ul li { cursor:pointer; padding:6px 12px; border-radius:6px; transition:0.2s; }
+nav ul li:hover, nav ul li.active { background: var(--accent); color:white; }
+
+/* ---------- Book list ---------- */
+.book-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); /* এক লাইনে ৩–৪টা কার্ড */
+  gap: 16px;
+  justify-content: start; /* বাম দিক থেকে শুরু হবে */
+  padding: 0;
+}
+
+/* ---------- প্রতিটা বইয়ের কার্ড ---------- */
+.card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.95);
+  border-radius: 12px;
+  padding: 10px;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+  width: 100%;
+  max-width: 270px; /* বক্স বড় না হয় */
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+/* ---------- ছবিটা বাম পাশে ---------- */
+.card img {
+  width: 80px;
+  height: 110px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* ---------- নাম ও লেখকের নাম ---------- */
+.card-content {
+  flex: 1;
+  padding-left: 10px;
+}
+
+.card-content h3 {
+  font-size: 15px;
+  margin: 0 0 4px 0;
+  color: #222;
+}
+
+.card-content p {
+  margin: 0;
+  font-size: 13px;
+  color: #555;
+}
+
+/* ---------- লুকানো বিস্তারিত (বইয়ের নিচে খুলবে) ---------- */
+.card {
+  position: relative;
+}
+
+.card-details {
+  position: absolute;
+  top: 100%; /* কার্ডের একদম নিচ থেকে শুরু */
+  left: 0;
+  width: 95%;
+  background: rgba(255, 255, 255, 0.97);
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  padding: 1px 8px;
+  font-size: 12px;
+  color: #333;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(5px);
+  transition: all 0.3s ease;
+  line-height: 1;
+  z-index: 5;
+  white-space: pre-line;
+}
+
+.card:hover .card-details {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+
+footer { margin-top:28px; text-align:center; color:#666; font-size:14px; }
