@@ -3,14 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<title>X পাঠাগার</title>
+<title>Statistics - X পাঠাগার</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div class="main-container">
 
-  <!-- Header -->
   <header>
     <div class="logo-name">
       <img src="library-logo.png" alt="Logo" class="logo">
@@ -21,22 +19,24 @@
     </div>
     <nav>
       <ul>
-        <li class="active"><a href="index.html">Home</a></li>
-        <li><a href="statistics.html">Statistics</a></li>
+        <li><a href="index.html">Home</a></li>
+        <li class="active">Statistics</li>
       </ul>
     </nav>
   </header>
 
-  <!-- Book list section -->
-  <section class="book-list" id="bookList">
-    <!-- Books loaded dynamically here -->
+  <section class="statistics-section">
+    <h2>সর্বাধিক পঠিত বই</h2>
+    <canvas id="mostReadBooksChart"></canvas>
+
+    <h2>সর্বাধিক পাঠক</h2>
+    <canvas id="mostActiveReadersChart"></canvas>
   </section>
 
-  <!-- Footer -->
   <footer>© 2025 X পাঠাগার</footer>
 </div>
 
-<!-- Scripts -->
-<script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="statistics.js"></script>
 </body>
 </html>

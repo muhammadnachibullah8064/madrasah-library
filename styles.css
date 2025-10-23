@@ -23,7 +23,7 @@ body {
   backdrop-filter: blur(10px);
   border-radius: 20px;
   padding: var(--padding-inside);
-  overflow-y: auto;
+  overflow-y: visible;
   display: flex;
   flex-direction: column;
 }
@@ -43,7 +43,7 @@ nav ul li:hover, nav ul li.active { background: var(--accent); color:white; }
 /* ---------- Book list ---------- */
 .book-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); /* এক লাইনে ৩–৪টা কার্ড */
+  grid-template-columns: repeat(3, 1fr); /* এক লাইনে ৩–৪টা কার্ড */
   gap: 16px;
   justify-content: start; /* বাম দিক থেকে শুরু হবে */
   padding: 0;
@@ -61,7 +61,7 @@ nav ul li:hover, nav ul li.active { background: var(--accent); color:white; }
   transition: transform 0.25s ease, box-shadow 0.25s ease;
   position: relative;
   width: 100%;
-  max-width: 270px; /* বক্স বড় না হয় */
+  max-width: 320px; /* বক্স বড় না হয় */
 }
 
 .card:hover {
@@ -126,6 +126,43 @@ nav ul li:hover, nav ul li.active { background: var(--accent); color:white; }
   transform: translateY(0);
   pointer-events: auto;
 }
+/* ---------- নতুন যুক্ত করা অংশ ---------- */
 
+/* ডান পাশে বাটন কন্টেইনার */
+.card-buttons {
+  position: absolute;
+  top: 50%;
+  right: -90px; /* শুরুর সময় বাইরে থাকবে */
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+/* কার্ডে হোভার করলে বাটন বের হয়ে আসবে */
+.card:hover .card-buttons {
+  right: 8px; /* ডান পাশে সুন্দরভাবে দেখা যাবে */
+  opacity: 1;
+}
+
+/* প্রতিটি বাটনের স্টাইল */
+.card-buttons button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.card-buttons button:hover {
+  background: #009999;
+  transform: scale(1.05);
+}
 
 footer { margin-top:28px; text-align:center; color:#666; font-size:14px; }
