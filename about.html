@@ -1,0 +1,40 @@
+<div class="about-container">
+  <!-- বাম পাশ: ইতিহাস -->
+  <div class="about-left" id="aboutLeft">
+    <h2 class="main-title">আমাদের সম্পর্কে</h2>
+    <!-- Content এখানে লোড হবে -->
+  </div>
+
+<!-- দান করুন -->
+ <div class="about-right">
+  <h2 class="main-title">দান করুন</h2>
+
+  <div class="payment-icons">
+    <img src="images/bkash.jpg" alt="বিকাশ" class="pay-icon" onclick="togglePayment('bkash')">
+    <img src="images/nagad.jpg" alt="নগদ" class="pay-icon" onclick="togglePayment('nagad')">
+    <img src="images/bank.jpg" alt="ব্যাংক" class="pay-icon" onclick="togglePayment('bank')">
+  </div>
+
+  <!-- পেমেন্ট তথ্য + ফর্ম -->
+  <div id="payment-section">
+    <div id="payment-info" class="payment-info"></div>
+
+    <form id="donation-form" class="donation-form">
+      <h3 id="payment-title" class="payment-title"></h3>
+
+      <label>নাম:</label>
+      <input type="text" placeholder="আপনার নাম" required>
+
+      <label>মোবাইল নাম্বার:</label>
+      <input type="text" placeholder="01XXXXXXXXX" required>
+
+      <label>পরিমাণ (৳):</label>
+      <input type="number" placeholder="যত টাকা দান করতে চান" required>
+
+      <label>বার্তা (ঐচ্ছিক):</label>
+      <textarea rows="3" placeholder="কিছু লিখতে চাইলে..."></textarea>
+
+      <button type="submit">দান পাঠান</button>
+    </form>
+  </div>
+</div>

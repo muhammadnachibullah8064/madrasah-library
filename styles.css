@@ -166,3 +166,185 @@ nav ul li:hover, nav ul li.active { background: var(--accent); color:white; }
 }
 
 footer { margin-top:28px; text-align:center; color:#666; font-size:14px; }
+
+/* ==============================
+   About Page Layout
+============================== */
+.about-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+  padding: 1px;
+  max-width: 1100px;
+  margin: -10px auto 0 auto;
+  flex-wrap: wrap;
+}
+
+.about-left, .about-right {
+  flex: 1;
+  min-width: 320px;
+  background: #fff;
+  padding: 25px 30px;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.about-left h2, .about-right h2 {
+  margin-bottom: 15px;
+  color: #2b2b2b;
+  border-bottom: 2px solid #4CAF50;
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+.about-left p {
+  line-height: 1.7;
+  color: #333;
+}
+
+.payment-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 20px 0;
+}
+
+.payment-list li {
+  margin-bottom: 12px;
+  font-size: 16px;
+  color: #444;
+}
+
+.madrasah-info {
+  text-align: center;
+}
+
+.madrasah-logo {
+  width: 120px;
+  margin: 15px 0;
+}
+
+.madrasah-info a {
+  color: #4CAF50;
+  text-decoration: none;
+}
+
+.madrasah-info a:hover {
+  text-decoration: underline;
+}
+.hidden {
+  display: none;
+}
+
+.about-right {
+  text-align: center;
+}
+
+.main-title {
+  font-size: 28px;
+  margin-bottom: 15px;
+  color: #222;
+}
+
+.payment-icons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 15px 0;
+}
+
+.pay-icon {
+  width: 70px;
+  cursor: pointer;
+  transition: transform 0.3s;
+  border-radius: 15px; /* এখানে চার কোন গোল হচ্ছে */
+  border: 1px solid #ccc; /* চাইলে হালকা বর্ডার দিতে পারো */
+}
+
+.pay-icon:hover {
+  transform: scale(1.1);
+}
+
+.payment-info {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.payment-title {
+  text-align: center;
+  color: #444;
+  margin-bottom: 15px;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.payment-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.payment-number {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: #111;
+}
+
+.qr-img {
+  width: 130px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+/* দান ফর্ম */
+.donation-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: 350px;
+  margin: 0 auto;
+}
+
+.donation-form label {
+  align-self: flex-start;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.donation-form input,
+.donation-form textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.donation-form button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #e91e63;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.donation-form button:hover {
+  background-color: #c2185b;
+}
+/* === অ্যানিমেশনসহ পেমেন্ট সেকশন === */
+#payment-section {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.5s ease; /* সুন্দরভাবে আসা-যাওয়া */
+}
+
+#payment-section.show {
+  max-height: 600px; /* ফরমের আনুমানিক উচ্চতা */
+  opacity: 1;
+}

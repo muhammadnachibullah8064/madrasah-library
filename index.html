@@ -1,42 +1,83 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<title>X পাঠাগার</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>X পাঠাগার</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="main-container">
+  <div class="main-container">
 
-  <!-- Header -->
-  <header>
-    <div class="logo-name">
-      <img src="library-logo.png" alt="Logo" class="logo">
-      <div class="name-location">
-        <h1 id="headerTitle">X পাঠাগার, গাজীপুর</h1>
-        <p id="location">X জায়গায়</p>
+    <!-- Header -->
+    <header>
+      <div class="logo-name">
+        <img src="library-logo.png" alt="Logo" class="logo">
+        <div class="name-location">
+          <h1 id="headerTitle">X পাঠাগার, গাজীপুর</h1>
+          <p id="location">X জায়গায়</p>
+        </div>
       </div>
-    </div>
-    <nav>
-      <ul>
-        <li class="active"><a href="index.html">Home</a></li>
-        <li><a href="statistics.html">Statistics</a></li>
-      </ul>
-    </nav>
-  </header>
+      <nav>
+        <ul>
+          <li class="active"><a href="index.html">Home</a></li>
+          <li><a href="statistics.html">Statistics</a></li>
+          <li><a href="about.html" id="aboutLink">About Us</a></li>
+        </ul>
+      </nav>
+    </header>
 
-  <!-- Book list section -->
-  <section class="book-list" id="bookList">
-    <!-- Books loaded dynamically here -->
-  </section>
+    <!-- Book list section -->
+    <section class="book-list" id="bookList">
+      <!-- Books loaded dynamically here (script.js) -->
+    </section>
 
-  <!-- Footer -->
-  <footer>© 2025 X পাঠাগার</footer>
-</div>
+    <!-- About Section -->
+    <section id="aboutSection" style="display:none; padding:18px;">
+      <!-- About content loaded via AJAX -->
+    </section>
 
-<!-- Scripts -->
-<script src="script.js"></script>
+    <!-- Footer -->
+    <footer>© 2025 X পাঠাগার</footer>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="script.js"></script>
+
+  <!-- About লিংকের জন্য AJAX হুক -->
+  <script>
+    (function(){
+      const aboutLink = document.getElementById('aboutLink');
+      const bookList = document.getElementById('bookList');
+      const aboutSection = document.getElementById('aboutSection');
+
+      if (!aboutLink || !bookList || !aboutSection) return;
+
+      aboutLink.addEventListener('click', function(e){
+        e.preventDefault(); // নতুন পেজ খোলা আটকানো
+
+        // বইয়ের তালিকা লুকানো (Home থেকে দেখা গেলে)
+        bookList.style.display = 'none';
+
+        // About সেকশন দেখানো
+        aboutSection.style.display = 'block';
+
+        // AJAX দিয়ে about.html লোড করা
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'about.html', true);
+        xhr.onreadystatechange = function() {
+          if(xhr.readyState === 4 && xhr.status === 200){
+            aboutSection.innerHTML = xhr.responseText;
+          }
+        };
+        xhr.send();
+
+        // Scroll করলে ইউজার সরাসরি About সেকশনে যাবে
+        aboutSection.scrollIntoView({ behavior: 'smooth' });
+      });
+    })();
+  </script>
 </body>
 </html>

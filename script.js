@@ -94,3 +94,56 @@ async function handleBook(title) {
     alert("❌ সংযোগে সমস্যা। আবার চেষ্টা করুন।");
   }
 }
+let currentType = null;
+function togglePayment(type) {
+  const section = document.getElementById("payment-section");
+  const infoDiv = document.getElementById("payment-info");
+  const title = document.getElementById("payment-title");
+
+  if (currentType === type && section.classList.contains("show")) {
+    section.classList.remove("show");
+    currentType = null;
+    return;
+  }
+
+  currentType = type;
+  section.classList.add("show");
+
+  let number = "";
+  let qr = "";
+  let titleText = "";
+
+  if (type === "bkash") {
+    number = "01342675757";
+    qr = "images/bkash-qr.jpg";
+    titleText = "বিকাশ পেমেন্ট তথ্য";
+  } else if (type === "nagad") {
+    number = "01342675757";
+    qr = "images/nagad-qr.jpg";
+    titleText = "নগদ পেমেন্ট তথ্য";
+  } else {
+    number = "2050 338 02 02384808";
+    qr = "images/bank-qr.jpg";
+    titleText = "ব্যাংক পেমেন্ট তথ্য";
+  }
+
+  title.innerHTML = titleText;
+  infoDiv.innerHTML = `
+    <div class="payment-box">
+      <div class="payment-number">${number}</div>
+      <img src="${qr}" alt="QR" class="qr-img">
+    </div>
+  `;
+}
+// ================================
+// পূর্বের সব কোড (headerTitle, loadBooks, handleComment, handleBook, togglePayment)
+// ================================
+
+// ✅ এখন Ajax দিয়ে About text লোড করো
+fetch('about-text.html')
+  .then(response => response.text())
+  .then(data => {
+    const aboutLeft = document.getElementById('aboutLeft');
+    aboutLeft.insertAdjacentHTML('beforeend', data);
+  })
+  .catch(error => console.error('Error loading about text:', error));
