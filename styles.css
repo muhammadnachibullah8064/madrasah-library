@@ -3,6 +3,10 @@
   --box-width: 90;
   --box-height: 90;
   --padding-inside: 40px;
+  --container-width: 90%;
+  --container-vertical-margin: 40px;
+  --left-initial-height: 400px;
+  --left-expanded-height: 1200px;
 }
 
 body {
@@ -11,22 +15,12 @@ body {
   background: url('library-bg.png') no-repeat center center fixed;
   background-size: cover;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
 }
 
-.main-container {
-  width: calc(var(--box-width) * 1vw);
-  height: calc(var(--box-height) * 1vh);
-  background: rgba(255,255,255,0.2);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: var(--padding-inside);
-  overflow-y: visible;
-  display: flex;
-  flex-direction: column;
-}
 
 header { text-align: center; margin-bottom: 20px; }
 
@@ -44,7 +38,7 @@ nav ul li:hover, nav ul li.active { background: var(--accent); color:white; }
 .book-list {
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* এক লাইনে ৩–৪টা কার্ড */
-  gap: 16px;
+  gap: 40px;
   justify-content: start; /* বাম দিক থেকে শুরু হবে */
   padding: 0;
 }
@@ -54,7 +48,8 @@ nav ul li:hover, nav ul li.active { background: var(--accent); color:white; }
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(255,255,255,0.95);
+  background: rgba(255,255,255,0.5);
+  backdrop-filter: blur(8px);
   border-radius: 12px;
   padding: 10px;
   cursor: pointer;
@@ -167,184 +162,686 @@ nav ul li:hover, nav ul li.active { background: var(--accent); color:white; }
 
 footer { margin-top:28px; text-align:center; color:#666; font-size:14px; }
 
+
 /* ==============================
-   About Page Layout
+   ABOUT PAGE LAYOUT (বাম-ডান বক্স)
 ============================== */
 .about-container {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 40px;
-  padding: 1px;
-  max-width: 1100px;
-  margin: -10px auto 0 auto;
-  flex-wrap: wrap;
+  justify-content: flex-start; /* একসাথে সাজানো */
+  flex-wrap: nowrap;           /* আলাদা লাইনে না যায় */
+  width: 90%;                  /* কন্টেইনার প্রস্থ */
+  margin: -20px auto;           /* উপরে ও নিচে ফাঁকা */
+  padding: 0;
 }
 
-.about-left, .about-right {
-  flex: 1;
-  min-width: 320px;
+/* ==============================
+   LEFT BOX (ইতিহাস)
+============================== */
+.about-left {
+  /* 📏 সাইজ কন্ট্রোল */
+  width: 700px;         /* প্রস্থ (ডানে-বামে বড়/ছোট) */
+  height: 400px;        /* উচ্চতা (উপরে-নিচে বড়/ছোট) */
+
+  /* 🎯 অবস্থান কন্ট্রোল */
+  position: relative;
+  top: 0px;             /* উপরে(+)/নিচে(-) সরানো */
+  left: -100px;          /* ডানে(+)/বামে(-) সরানো */
+
+  /* 🧭 মার্জিন কন্ট্রোল */
+  margin-top: 20px;     /* উপরের ফাঁকা */
+  margin-right: -200px; /* ডানের ফাঁকা */
+  margin-bottom: 20px;  /* নিচের ফাঁকা */
+  margin-left: 20px;    /* বামের ফাঁকা */
+
+  /* 🧱 Box Style */
   background: #fff;
   padding: 25px 30px;
   border-radius: 15px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-.about-left h2, .about-right h2 {
-  margin-bottom: 15px;
-  color: #2b2b2b;
-  border-bottom: 2px solid #4CAF50;
-  display: inline-block;
-  padding-bottom: 5px;
-}
-
-.about-left p {
-  line-height: 1.7;
-  color: #333;
-}
-
-.payment-list {
-  list-style: none;
-  padding: 0;
-  margin: 10px 0 20px 0;
-}
-
-.payment-list li {
-  margin-bottom: 12px;
-  font-size: 16px;
-  color: #444;
-}
-
-.madrasah-info {
-  text-align: center;
-}
-
-.madrasah-logo {
-  width: 120px;
-  margin: 15px 0;
-}
-
-.madrasah-info a {
-  color: #4CAF50;
-  text-decoration: none;
-}
-
-.madrasah-info a:hover {
-  text-decoration: underline;
-}
-.hidden {
-  display: none;
-}
-
-.about-right {
-  text-align: center;
-}
-
-.main-title {
-  font-size: 28px;
-  margin-bottom: 15px;
-  color: #222;
-}
-
-.payment-icons {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin: 15px 0;
-}
-
-.pay-icon {
-  width: 70px;
-  cursor: pointer;
-  transition: transform 0.3s;
-  border-radius: 15px; /* এখানে চার কোন গোল হচ্ছে */
-  border: 1px solid #ccc; /* চাইলে হালকা বর্ডার দিতে পারো */
-}
-
-.pay-icon:hover {
-  transform: scale(1.1);
-}
-
-.payment-info {
-  margin-top: 10px;
-  text-align: center;
-}
-
-.payment-title {
-  text-align: center;
-  color: #444;
-  margin-bottom: 15px;
-  font-weight: bold;
-  font-size: 20px;
-}
-
-.payment-box {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 30px;
-  margin-bottom: 20px;
-}
-
-.payment-number {
-  font-size: 1.3em;
-  font-weight: bold;
-  color: #111;
-}
-
-.qr-img {
-  width: 130px;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-}
-
-/* দান ফর্ম */
-.donation-form {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  max-width: 350px;
+  word-wrap: break-word;
+  overflow: hidden; /* ডিফল্টভাবে বক্সে কনটেন্ট সীমাবদ্ধ */
+}
+
+/* ==============================
+   RIGHT BOX (নিয়মাবলী)
+============================== */
+.about-right {
+  /* 📏 সাইজ কন্ট্রোল */
+  width: 400px;         /* প্রস্থ (ডানে-বামে বড়/ছোট) */
+  height: 400px;        /* উচ্চতা (উপরে-নিচে বড়/ছোট) */
+
+  /* 🎯 অবস্থান কন্ট্রোল */
+  position: relative;
+  top: 0px;             /* উপরে(+)/নিচে(-) সরানো */
+  left: 100px;            /* ডানে(+)/বামে(-) সরানো */
+
+  /* 🧭 মার্জিন কন্ট্রোল */
+  margin-top: 20px;     /* উপরের ফাঁকা */
+  margin-right: 20px;   /* ডানের ফাঁকা */
+  margin-bottom: 20px;  /* নিচের ফাঁকা */
+  margin-left: 20px;    /* বামের ফাঁকা */
+
+  /* 🧱 Box Style */
+  background: #fff;
+  padding: 25px 30px;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+/* ==============================
+   Inner Content Wrapper (স্ক্রলেবল)
+============================== */
+.content-scroll-wrapper {
+  flex: 1;                /* বাকি জায়গা পুরো ভরবে */
+  min-height: 0;           /* Flexbox ফিক্স */
+  overflow-y: auto;        /* উল্লম্ব স্ক্রল চালু হবে */
+  padding-right: 5px;      /* scrollbar overlap এড়াতে */
+}
+
+/* ==============================
+   Header/Title Styling
+============================== */
+.about-left h2, .about-right h2 {
+  display: inline-block;
+  margin: 0 auto 15px auto;
+  padding-bottom: 5px;
+  border-bottom: 2px solid #4CAF50;
+}
+
+/* ==============================
+   "আরো পড়ুন" অ্যাকশন
+============================== */
+.more-text {
+  display: none; 
+}
+
+.about-left.expanded-box .more-text {
+  display: block; 
+}
+
+/* ==============================
+   Read More button
+============================== */
+.read-more-btn {
+  display: block;
+  margin: 10px 0 0 0;      /* content থেকে ফাঁকা */
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  align-self: flex-start;  /* বাম দিকে ঠিক রাখে */
+  position: relative; 
+  z-index: 2;
+}
+/* ✅ Contact Section Layout */
+.contact-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: start;
+  padding: 40px 20px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
-.donation-form label {
-  align-self: flex-start;
-  font-weight: bold;
-  margin-top: 5px;
+/* ==============================
+   🧱 সাধারণ বক্স স্টাইল
+============================== */
+.contact-box {
+  background: #fff;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  position: relative; /* পজিশন কন্ট্রোল কাজের জন্য দরকার */
+  transition: all 0.3s ease;
 }
 
-.donation-form input,
-.donation-form textarea {
+/* ==============================
+   🎯 বাম বক্স (দান সম্পর্কিত)
+============================== */
+.left-box {
+  /* 📏 সাইজ কন্ট্রোল */
+  width: 550px;          /* প্রস্থ */
+  height: auto;          /* উচ্চতা */
+
+  /* 🎯 অবস্থান কন্ট্রোল */
+  top: -50px;              /* উপরে(+)/নিচে(-) সরানো */
+  left: -40px;             /* ডানে(+)/বামে(-) সরানো */
+  margin-top: 0px;       /* উপরের ফাঁকা */
+  margin-left: 0px;      /* বামের ফাঁকা */
+  margin-right: 0px;     /* ডানের ফাঁকা */
+
+  /* 🧭 বক্সের ভেতরের স্টাইল */
+  background: #fff;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.left-box h2 {
+  color: #0b6530;
+  margin-bottom: 10px;
+}
+
+.donation-options {
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  margin-top: 15px;
+}
+
+.donation-options ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.donation-options li {
+  margin: 6px 0;
+  font-weight: 500;
+}
+
+/* ==============================
+   🎯 ডান বক্স (লোগো + ম্যাপ)
+============================== */
+.right-box {
+  /* 📏 সাইজ কন্ট্রোল */
+  width: 550px;          /* প্রস্থ */
+  height: auto;          /* উচ্চতা */
+
+  /* 🎯 অবস্থান কন্ট্রোল */
+  top: -50px;              /* উপরে(+)/নিচে(-) সরানো */
+  right: 40px;            /* ডানে(+)/বামে(-) সরানো */
+  margin-top: 0px;       /* উপরের ফাঁকা */
+  margin-right: 0px;     /* ডানের ফাঁকা */
+  margin-left: 0px;      /* বামের ফাঁকা */
+
+  /* 🧭 বক্স স্টাইল */
+  background: #fff;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.contact-logo {
+  width: 120px;
+  margin-bottom: 15px;
+}
+
+.right-box h3 {
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.right-box p {
+  line-height: 1.6;
+  color: #444;
+}
+
+.right-box a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.right-box a:hover {
+  text-decoration: underline;
+}
+
+.map-container {
+  margin-top: 15px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* ==============================
+   📱 মোবাইল রেসপনসিভ
+============================== */
+@media (max-width: 768px) {
+  .contact-section {
+    grid-template-columns: 1fr;
+  }
+
+  .left-box,
+  .right-box {
+    width: 100%;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+  }
+}
+.contact-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* ==============================
+1. বাম বক্স হেডিং - লেখা পর্যন্ত আন্ডারলাইন
+============================== */
+.contact-box.left-box h2 {
+    display: table;           /* আন্ডারলাইন শুধু লেখা পর্যন্ত */
+    margin: 0 auto 10px auto; /* উপরের ফাঁকা 0, নিচে 10px, এবং মাঝখানে */
+    padding-bottom: 5px;
+    border-bottom: 2px solid #4CAF50;
+    text-align: center;       /* লেখা ভিতরে মাঝখানে */
+    color: #4CAF50;
+}
+
+
+/* ==============================
+2. পেমেন্ট অপশন হেডিং - মাঝখানে, উপরের ফাঁকা কমানো
+============================== */
+.donation-options h3 {
+    text-align: center;
+    margin-top: -10px;                /* উপরের ফাঁকা কমানো */
+    margin-bottom: 10px;
+}
+
+/* ==============================
+3. পেমেন্ট আইকন - মাঝখানে, ছোট, রাউন্ড, spacing
+============================== */
+.payment-icons {
+    display: flex;
+    justify-content: center;    
+    gap: 20px;                      /* আইকনগুলোর মধ্যে সামান্য ফাঁকা */
+    margin-bottom: 15px;
+}
+
+.payment-icons img.payment-icon {
+    width: 60px;                
+    height: 60px;
+    border-radius: 12px;        
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.payment-icons img.payment-icon:hover {
+    transform: scale(1.1);      
+}
+
+/* ================= Payment Form Styling ================= */
+.payment-form {
+  background-color: #f9f9f9;       /* হালকা ব্যাকগ্রাউন্ড */
+  border: 2px solid #4CAF50;       /* সবুজ বর্ডার */
+  border-radius: 12px;             /* গোলাকার কোণা */
+  padding: 0 20px;                 /* শুরুতে vertical padding 0, horizontal padding 20px */
+  margin-top: 15px;
   width: 100%;
-  padding: 8px;
+  box-sizing: border-box;
+  max-height: 0;                   /* hidden by default */
+  overflow: hidden;                /* hidden content */
+  transition: max-height 0.4s ease, padding 0.4s ease; /* smooth slide animation */
+}
+
+.payment-form.show {
+  max-height: 490px;               /* slide down হলে visible হবে */
+  padding: 20px;                    /* full padding */
+  transition: max-height 0.60s ease-out, padding 0.60s ease;
+}
+
+/* হেডিং */
+.payment-form h3 {
+  text-align: center;
+  margin-bottom: 15px;
+  color: #4CAF50;
+  font-size: 20px;
+}
+
+/* লেবেল */
+.payment-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* ইনপুট ও টেক্সটএরিয়া */
+.payment-form input,
+.payment-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 15px;
   border: 1px solid #ccc;
   border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 15px;
 }
 
-.donation-form button {
-  margin-top: 10px;
-  padding: 10px 20px;
-  background-color: #e91e63;
+.payment-form textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* সাবমিট বাটন */
+.payment-form button {
+  background-color: #4CAF50;
   color: white;
   border: none;
+  padding: 12px 20px;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
+  width: 100%;
+  transition: background 0.3s ease;
 }
 
-.donation-form button:hover {
-  background-color: #c2185b;
-}
-/* === অ্যানিমেশনসহ পেমেন্ট সেকশন === */
-#payment-section {
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition: all 0.5s ease; /* সুন্দরভাবে আসা-যাওয়া */
+.payment-form button:hover {
+  background-color: #45a049;
 }
 
-#payment-section.show {
-  max-height: 600px; /* ফরমের আনুমানিক উচ্চতা */
-  opacity: 1;
+/* ================= right box ================= */
+.contact-box.right-box {
+    text-align: center;  /* সব আইটেম মাঝখানে */
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+}
+
+.contact-box.right-box .contact-logo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;           /* গোলাকার লোগো */
+    border: 3px solid #30a034;    /* হালকা সবুজ বর্ডার */
+    object-fit: cover;
+    margin-bottom: 1px;
+}
+
+.contact-box.right-box h2 {
+    display: table;           /* আন্ডারলাইন শুধু লেখা পর্যন্ত */
+    margin: 0 auto 10px auto; /* উপরের ফাঁকা 0, নিচে 10px, এবং মাঝখানে */
+    padding-bottom: 5px;
+    border-bottom: 2px solid #4CAF50;
+    color: #4CAF50;
+    text-align: center;       /* লেখা ভিতরে মাঝখানে */
+}
+
+.contact-box.right-box h3 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.contact-box.right-box p {
+  margin-top: 5px; /* p এর উপরের ফাঁকা */
+}
+
+.contact-box.right-box .address {
+    margin: 5px 0 20px 0;
+    font-size: 16px;
+    color: #f80a0a;
+}
+
+/* ডান বক্সের আইকন স্টাইল */
+.contact-box.right-box .contact-icons {
+  display: flex;
+  justify-content: center;
+  gap: 40px; /* আইকনের মাঝে সমান ফাঁকা */
+  margin-top: 15px;
+}
+
+.contact-box.right-box .contact-icons .icon-item {
+  text-align: center;
+  width: 60px;        /* ফিক্সড width */
+}
+
+.contact-box.right-box .contact-icons .icon-item i {
+  font-size: 36px;  /* বড় আইকন */
+  display: block;
+  margin-bottom: 5px;
+  transition: transform 0.3s;
+}
+
+/* ব্র্যান্ড কালার */
+.contact-box.right-box .contact-icons .icon-item:nth-child(1) i { color: #1877F2; }  /* Facebook */
+.contact-box.right-box .contact-icons .icon-item:nth-child(2) i { color: #D44638; }  /* Gmail */
+.contact-box.right-box .contact-icons .icon-item:nth-child(3) i { color: #4CAF50; }  /* Map */
+
+/* হোভার এফেক্ট */
+.contact-box.right-box .contact-icons .icon-item i:hover {
+  transform: scale(1.2);
+  cursor: pointer;
+  text-decoration: none; /* আন্ডারলাইন বন্ধ */
+}
+
+/* নামের জন্য fixed height */
+.contact-box.right-box .contact-icons .icon-item span {
+  display: block;
+  margin-top: 2px;
+  font-size: 14px;
+  color: #333;
+  height: 18px;       /* সব আইকনের নিচে নামের জন্য একই উচ্চতা */
+  line-height: 18px;
+}
+/* প্রতিটি আইকন-নাম আইটেম */
+.contact-box.right-box .contact-icons .icon-item a {
+  text-decoration: none; /* আন্ডারলাইন বন্ধ */
+  color: inherit;        /* আইকনের কালার ঠিক থাকবে */
+  display: block;
+}
+
+/* হোভার এফেক্ট */
+.contact-box.right-box .contact-icons .icon-item a:hover i {
+  transform: scale(1.2);
+}
+
+/* span নামের জন্য হোভার এফেক্ট বন্ধ */
+.contact-box.right-box .contact-icons .icon-item a:hover span {
+  text-decoration: none;
+}
+
+.card-buttons  {
+  display: none !important;
+}
+.card-details  {
+  display: none !important;
+}
+/* হেডার-এ লোগো + নাম + ঠিকানা */
+header {
+  width: 40%;
+  text-align: center;
+  padding: 20px 0;
+  gap: 30px;
+}
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 20px;
+  background: rgba(255,255,255,0.4);
+  border-radius: 12px;
+  backdrop-filter: blur(5px);
+}
+
+/* লোগো */
+.logo {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+/* নাম ও ঠিকানা */
+.name-location h1 {
+  margin:0;
+  font-size: 26px;
+  color: #006666;
+}
+.name-location p {
+  margin:0;
+  font-size: 16px;
+  color:#555;
+}
+
+/* প্রতিটি ন্যাভ বাটন আলাদা বক্স */
+.nav-box {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 20px 6px 0 6px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 12px;
+  backdrop-filter: blur(5px);
+  text-decoration: none;
+  color: #006666;
+  font-weight: 500;
+  transition: 0.3s ease;
+}
+
+.nav-box:hover {
+  background: rgba(0,102,102,0.6);
+  color: white;
+  transform: translateY(-3px);
+}
+/* ==============================
+   PAGINATION STYLES (styles.css এ যোগ করুন)
+============================== */
+
+/* প্রধান কন্টেইনার: এটি এখন শুধুমাত্র ভেতরের উপাদানগুলিকে ধরে রাখে */
+.pagination { 
+  padding: 20px 20px 40px 20px; 
+  max-width: 90%; 
+  margin: 20px auto;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(5px);
+  border-radius: 12px;
+  text-align: center; 
+}
+
+/* টাইটেল স্টাইল (এটি একটি ব্লক-লেভেল div, তাই নতুন লাইনে শুরু হবে) */
+.pagination-title {
+  font-weight: bold;
+  color: var(--accent);
+  font-size: 18px; 
+  margin-bottom: 15px; /* বাটনগুলোর সাথে একটু ফাঁকা */
+  text-align: center;
+  width: 100%;
+}
+
+/* বাটন কন্টেইনার স্টাইল (এটাই এখন Flexbox) */
+.pagination-buttons {
+  display: flex;
+  flex-wrap: wrap; 
+  justify-content: center; 
+  gap: 8px; 
+  width: 100%;
+}
+
+/* বাটনগুলোর স্টাইল অপরিবর্তিত থাকবে */
+.pagination-buttons button {
+  background-color: white;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s, color 0.2s, transform 0.2s;
+}
+
+.pagination-buttons button:hover {
+  background-color: #e6ffff;
+  transform: translateY(-3px);
+}
+
+.pagination-buttons button.active {
+  background-color: var(--accent); 
+  color: white;
+  border-color: var(--accent);
+  font-weight: bold;
+}
+
+/* ... আপনার .pagination-buttons এর আগের স্টাইলগুলোর সাথে যোগ করুন */
+.pagination-buttons span {
+  padding: 8px 12px; /* বাটনগুলোর সমান প্যাডিং */
+  font-size: 14px;
+  color: var(--accent);
+  font-weight: bold;
+}
+
+/* ==============================
+   SEARCH & CATEGORY STYLES
+============================== */
+.search-section {
+    width: 79%;
+    max-width: 1200px;
+    margin: -10px auto 20px auto;
+    padding: 15px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-container {
+    display: flex; /* ইনপুট ও বাটন পাশাপাশি আনার জন্য */
+    gap: 10px;
+    align-items: center;
+}
+
+#searchInput {
+    flex-grow: 1; /* সার্চ বক্সকে বেশি জায়গা দেবে */
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+#categoryBtn {
+    background-color: var(--accent); /* আপনার মূল রং (নীল বা সবুজ) ব্যবহার করুন */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s;
+}
+
+#categoryBtn:hover {
+    background-color: #0088aa; /* হোভার কালার পরিবর্তন করুন */
+    transform: translateY(-3px);
+}
+
+/* ক্যাটাগরি ড্রপডাউন স্টাইল */
+.category-dropdown {
+    display: none; /* শুরুতে এটি লুকানো থাকবে */
+    margin-top: 15px;
+    padding: 15px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.category-dropdown.show {
+    display: block; /* বাটন ক্লিক করলে দেখাবে */
+}
+
+.category-dropdown p {
+    margin: 0;
+    padding: 5px 0;
+    cursor: pointer;
+    font-size: 15px;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.1s;
+}
+
+.category-dropdown p:last-child {
+    border-bottom: none;
+}
+
+.category-dropdown p:hover {
+    background-color: #f0f0f0;
 }

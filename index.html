@@ -4,80 +4,107 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <title>X পাঠাগার</title>
+  <title>আল-ঈমান ইসলামিক পাঠাগার</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="main-container">
 
     <!-- Header -->
     <header>
-      <div class="logo-name">
-        <img src="library-logo.png" alt="Logo" class="logo">
-        <div class="name-location">
-          <h1 id="headerTitle">X পাঠাগার, গাজীপুর</h1>
-          <p id="location">X জায়গায়</p>
-        </div>
-      </div>
-      <nav>
-        <ul>
-          <li class="active"><a href="index.html">Home</a></li>
-          <li><a href="statistics.html">Statistics</a></li>
-          <li><a href="about.html" id="aboutLink">About Us</a></li>
-        </ul>
-      </nav>
-    </header>
+  <!-- লোগো + নাম + ঠিকানা -->
+  <div class="header-top">
+    <img src="library-logo.png" alt="Logo" class="logo">
+    <div class="name-location">
+      <h1 id="headerTitle">আল-ঈমান ইসলামিক পাঠাগার</h1>
+      <p id="location">আড়াবাড়ী,মৌচাক,গাজীপুর</p>
+    </div>
+  </div>
+
+  <!-- ন্যাভ বাটনগুলো -->
+  <a href="index.html" class="nav-box">Home</a>
+  <a href="statistics.html" class="nav-box">Statistics</a>
+  <a href="about.html" class="nav-box" id="aboutLink">About Us</a>
+  <a href="contact.html" class="nav-box" id="contactLink">Contact Us</a>
+</header>
+
+<section id="search-section" class="search-section">
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="বইয়ের নাম, লেখক বা প্রকাশনী দিয়ে সার্চ করুন..." onkeyup="handleSearch()">
+        
+        <button id="categoryBtn" onclick="toggleCategories()">ক্যাটাগরি</button>
+    </div>
+
+    <div id="categoryDropdown" class="category-dropdown">
+        <p>ক্যাটাগরি লোড হচ্ছে...</p>
+    </div>
+</section>
 
     <!-- Book list section -->
     <section class="book-list" id="bookList">
       <!-- Books loaded dynamically here (script.js) -->
     </section>
 
-    <!-- About Section -->
+    <!-- About/Contact Section -->
     <section id="aboutSection" style="display:none; padding:18px;">
-      <!-- About content loaded via AJAX -->
+      <!-- Content loaded via AJAX -->
     </section>
 
     <!-- Footer -->
     <footer>© 2025 X পাঠাগার</footer>
 
-  </div>
 
-  <!-- Scripts -->
-  <script src="script.js"></script>
+<!-- About ও Contact লিংকের জন্য AJAX হুক -->
+<script>
+(function() {
+  const aboutLink = document.getElementById('aboutLink');
+  const contactLink = document.getElementById('contactLink');
+  const bookList = document.getElementById('bookList');
+  const aboutSection = document.getElementById('aboutSection');
 
-  <!-- About লিংকের জন্য AJAX হুক -->
-  <script>
-    (function(){
-      const aboutLink = document.getElementById('aboutLink');
-      const bookList = document.getElementById('bookList');
-      const aboutSection = document.getElementById('aboutSection');
+  if (!bookList || !aboutSection) return;
 
-      if (!aboutLink || !bookList || !aboutSection) return;
+  function loadPage(url, initFunction) {
+    bookList.style.display = 'none';
+    aboutSection.style.display = 'block';
 
-      aboutLink.addEventListener('click', function(e){
-        e.preventDefault(); // নতুন পেজ খোলা আটকানো
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
 
-        // বইয়ের তালিকা লুকানো (Home থেকে দেখা গেলে)
-        bookList.style.display = 'none';
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        aboutSection.innerHTML = xhr.responseText;
+        if (typeof initFunction === 'function') {
+          initFunction();
+        }
+      }
+    };
 
-        // About সেকশন দেখানো
-        aboutSection.style.display = 'block';
+    xhr.send();
+    aboutSection.scrollIntoView({ behavior: 'smooth' });
+  }
 
-        // AJAX দিয়ে about.html লোড করা
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', 'about.html', true);
-        xhr.onreadystatechange = function() {
-          if(xhr.readyState === 4 && xhr.status === 200){
-            aboutSection.innerHTML = xhr.responseText;
-          }
-        };
-        xhr.send();
+  if (aboutLink) {
+    aboutLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      loadPage('about.html', typeof initReadMore === 'function' ? initReadMore : null);
+    });
+  }
 
-        // Scroll করলে ইউজার সরাসরি About সেকশনে যাবে
-        aboutSection.scrollIntoView({ behavior: 'smooth' });
+  if (contactLink) {
+    contactLink.addEventListener('click', function(e) {
+      e.preventDefault();
+
+      loadPage('contact.html', function() {
+        if (typeof initPaymentIcons === 'function') {
+          initPaymentIcons();
+        }
       });
-    })();
-  </script>
+    });
+  }
+})();  // <- IIFE শেষ
+</script>
+
+<!-- script.js defer করে নিচে রাখো -->
+<script src="script.js" defer></script>
 </body>
 </html>
