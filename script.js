@@ -11,9 +11,15 @@ document.getElementById('headerTitle').innerText = "আল-ঈমান ইস�
 document.getElementById('location').innerText = "আড়াবাড়ী,মৌচাক,গাজীপুর";
 
 const bookListEl = document.getElementById('bookList');
+const sampleModal = document.getElementById('sampleModal');
+const pdfViewer = document.getElementById('pdfViewer');
+const pdfFolderId = "readsample"
+const activeTimers = {};
+const CURRENT_USER_NAME = 'ব্যবহারকারীর নাম';
+
 
 // 🔹 তোমার Google Apps Script ওয়েব অ্যাপ URL (যেটা ডিপ্লয় করে পেয়েছো)
-const JSON_URL = "https://script.google.com/macros/s/AKfycbwK5I-dzATxojdoPYBjFAQ7d-lBk9heRBggp_CWQefYSp9RmZOHaY98IOB_owIm1oqjyg/exec";
+const JSON_URL = "https://script.google.com/macros/s/AKfycby8W7DtG4F-vqWv58V16g_N3veyh6imtT14mPLnSVQsUpfUbMWP1NSPb8U36J8AeMXLSw/exec";
 
 
 // -----------------------------------------------------------
@@ -138,7 +144,7 @@ function setupPagination(totalBooks) {
         }
 
         button.addEventListener('click', () => {
-            displayBooks(page);
+            displayFilteredBooks(page);
         });
 
         buttonsDiv.appendChild(button);
@@ -357,12 +363,14 @@ function displayFilteredBooks(page) {
     const endIndex = startIndex + booksPerPage;
     const pageBooks = currentBookList.slice(startIndex, endIndex);
 
-    // ... (বাকি বই ডিসপ্লে করার কোডটি এখানে কপি করে বসান)
-
-    // দ্রুত সমাধানের জন্য: ডিসপ্লে ফাংশনটির এই অংশটি কপি করে বসান:
+    // ✅ আপডেট করা বই ডিসপ্লে করার কোড:
     pageBooks.forEach(b => {
         const div = document.createElement('div');
         div.className = 'card';
+        
+        // ⭐ নতুন সংযোজন: কার্ডে ক্লিক করলে openModal ফাংশনটি কল হবে
+        div.onclick = () => openModal(b); 
+        
         const imgPath = `book image/${b.image}`;
 
         div.innerHTML = `
@@ -370,29 +378,15 @@ function displayFilteredBooks(page) {
             <div class="card-content">
                 <h3>${b.title}</h3>
                 <p>${b.author}</p>
+                <p>${b.translator}</p>
             </div>
-
-            <div class="card-buttons">
-                <button onclick="handleComment('${b.title}')">কমেন্ট</button>
-                <button onclick="handleBook('${b.title}')">বুক</button>
-            </div>
-
-            <div class="card-details">
-                <ul style="list-style:none; padding:0; margin:0; text-align:left;">
-                    <li><i class="fas fa-book"></i> খণ্ড: ${b.volume}</li>
-                    <li><i class="fas fa-building"></i> প্রকাশনী: ${b.publisher}</li>
-                    <li><i class="fas fa-money-bill-wave"></i> মূল্য: ${b.price}</li>
-                    <li><i class="fas fa-calendar-alt"></i> ${b.date}</li>
-                </ul>
-            </div>
-        `;
+            
+            `;
         bookListEl.appendChild(div);
     });
-    // ... (কপি করার শেষ)
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setupPagination(currentBookList.length); // ফিল্টার করা তালিকার উপর ভিত্তি করে প্যাজিনেশন তৈরি
-
 }
 
 // 🏷️ ক্যাটাগরি বাটন টগল ফাংশন
@@ -446,4 +440,359 @@ function filterByCategory(category, buttonText) {
 
     // নতুন ফিল্টার করা তালিকা দিয়ে ডিসপ্লে আপডেট করা
     displayFilteredBooks(1);
+}
+// -----------------------------------------------------------
+// ✅ ৪. ডিটেইলস পপআপ ফাংশন
+// -----------------------------------------------------------
+
+const bookModal = document.getElementById('bookModal'); // ✅ এই লাইনটি রাখুন
+
+// =====================================================================
+// ⭐ ১. সহযোগী ফাংশনসমূহ (সংখ্যা ও প্রত্যয়)
+// =====================================================================
+
+function convertEnglishNumberToBangla(n) {
+    if (typeof n !== 'number') return n;
+    const banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    return String(n).split('').map(digit => banglaDigits[parseInt(digit)]).join('');
+}
+
+function getBanglaOrdinal(n) {
+    const banglaNum = convertEnglishNumberToBangla(n);
+    if (n === 1) return `${banglaNum}ম`;
+    if (n === 2) return `${banglaNum}য়`;
+    if (n === 3) return `${banglaNum}য়`;
+    if (n === 4) return `${banglaNum}র্থ`;
+    if (n === 5) return `${banglaNum}ম`;
+    if (n === 6) return `${banglaNum}ষ্ঠ`;
+    return `${banglaNum}ম`;
+}
+
+function convertBanglaNumberToEnglish(str) {
+    if (!str) return str;
+    const bangla = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+    return str.replace(/[০-৯]/g, function (match) {
+        return english[bangla.indexOf(match)];
+    });
+}
+
+
+// =====================================================================
+// ⭐ ২. বুকিং/টাইমার ম্যানেজমেন্ট ফাংশনসমূহ (JSON_URL ব্যবহার করে সেভ)
+// =====================================================================
+
+// ⭐⭐ বুকিং ডিসপ্লে করার সাধারণ ফাংশন ⭐⭐
+function displayBookedVolume(bookedData, bookTitle, endTime) {
+    const bookedVolumeEl = document.getElementById('userBookedVolume');
+    const timerId = `timer_${bookTitle.replace(/\s/g, '_')}`; 
+    
+    // শুধু খণ্ড অংশটি বের করা 
+    const volumeOnly = bookedData.volumeName ? bookedData.volumeName.replace(bookedData.bookTitle, '').trim() : bookedData.bookTitle;
+
+    if (bookedVolumeEl) {
+        // নিশ্চিত করতে যে বুকিং ডিসপ্লে এর আগে hr ট্যাগ চলে আসে
+        bookedVolumeEl.innerHTML = `
+            <hr class="modal-detail-list-divider">
+            <p style="font-size: 1.1em; margin-bottom: 5px;">
+                <i class="fas fa-check-circle" style="color: green; margin-right: 8px;"></i> 
+                <strong>${volumeOnly}:</strong> 
+                <span id="${timerId}" style="font-weight: bold; color: #e74c3c; margin-left: 10px;"></span>
+            </p>
+        `;
+    }
+    
+    // টাইমার শুরু করা
+    updateTimer(endTime, timerId);
+}
+
+// ⭐⭐ ৭ দিনের কাউন্টডাউন টাইমার আপডেট করার ফাংশন ⭐⭐
+function updateTimer(endTime, elementId) {
+    // চলমান টাইমার বন্ধ করা
+    if (activeTimers[elementId]) {
+        clearInterval(activeTimers[elementId]);
+    }
+    
+    const timerInterval = setInterval(() => {
+        const now = new Date().getTime();
+        const distance = endTime - now;
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        const banglaDays = convertEnglishNumberToBangla(days);
+        const banglaHours = convertEnglishNumberToBangla(hours);
+        const banglaMinutes = convertEnglishNumberToBangla(minutes);
+        const banglaSeconds = convertEnglishNumberToBangla(seconds);
+        
+        const timerElement = document.getElementById(elementId);
+        if (timerElement) {
+            timerElement.innerHTML = `
+                ${banglaDays} দিন ${banglaHours} ঘণ্টা ${banglaMinutes} মিনিট ${banglaSeconds} সেকেন্ড 
+            `;
+        }
+
+        if (distance < 0) {
+            clearInterval(timerInterval);
+            delete activeTimers[elementId];
+            
+            const bookedVolumeEl = document.getElementById('userBookedVolume');
+            if (bookedVolumeEl) {
+                // বুকিং শেষ হলে শুধু HTML পরিবর্তন করা
+                bookedVolumeEl.innerHTML = '<p style="font-style: italic; color: red;">বুকিংয়ের সময় শেষ হয়েছে।</p>';
+            }
+        }
+    }, 1000);
+    
+    activeTimers[elementId] = timerInterval;
+}
+
+
+// ⭐⭐ মূল বুকিং হ্যান্ডেল করার ফাংশন (JSON_URL ব্যবহার করে Apps Script-এ সেভ) ⭐⭐
+function handleVolumeBooking(bookTitle, volumeNumber, volumeName) {
+    if (!CURRENT_USER_NAME || CURRENT_USER_NAME === 'ব্যবহারকারীর নাম') {
+        alert("বুকিং করার জন্য প্রথমে আপনার ব্যবহারকারীর নাম সেট করুন।");
+        return;
+    }
+    
+    // 1. ডেটা তৈরি
+    const bookingData = {
+        name: CURRENT_USER_NAME,
+        bookTitle: volumeName, 
+        status: "Booked"
+    };
+    
+    // 2. Apps Script-এ POST করা (বুকিং সেভ)
+    fetch(JSON_URL, { // <--- JSON_URL ব্যবহার করা হলো
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bookingData),
+        mode: 'no-cors' 
+    })
+    .then(response => {
+        console.log("Booking request sent to server.");
+        
+        // বুকিং সেভ সফল হলে, সাত দিনের বুকিং টাইম শুরু হবে
+        const sevenDays = 7 * 24 * 60 * 60 * 1000;
+        const endTime = new Date().getTime() + sevenDays;
+
+        // তাৎক্ষণিক ডিসপ্লে আপডেট করা
+        displayBookedVolume({bookTitle: bookTitle, volumeName: volumeName}, bookTitle, endTime);
+    })
+    .catch(error => {
+        console.error('Error saving booking:', error);
+        alert('বুকিং সেভ করতে সমস্যা হয়েছে।');
+    });
+}
+
+
+// ⭐⭐ শীট থেকে বুকিং ডেটা লোড করার ফাংশন (লোকাল স্টোরেজ বাদ দিয়ে পরিষ্কার করা হলো) ⭐⭐
+function checkAndDisplayBookedVolume(book) {
+    // লোকাল স্টোরেজ ব্যবহার করা হচ্ছে না, তাই কেবল ডিসপ্লে এরিয়া পরিষ্কার করা হলো।
+    // শীট থেকে লোড করার লজিক আপনার Apps Script এ যুক্ত হলে এই ফাংশনটি আপডেট করা যাবে।
+    const bookedVolumeEl = document.getElementById('userBookedVolume');
+    if (bookedVolumeEl) bookedVolumeEl.innerHTML = '';
+}
+
+
+// ⭐⭐ খণ্ড ড্রপডাউন লোড করার ফাংশন ⭐⭐
+function loadVolumeDropdown(book, count) {
+    const dropdown = document.getElementById('volumeDropdown');
+    if (!dropdown) return;
+    
+    dropdown.innerHTML = '';
+    
+    if (count > 1) {
+        for (let i = 1; i <= count; i++) {
+            const ordinal = getBanglaOrdinal(i);
+            const volumeName = `${book.title} ${ordinal} খণ্ড`;
+            
+            const item = document.createElement('a');
+            item.href = '#';
+            item.innerText = volumeName;
+            
+            item.onclick = (e) => {
+                e.preventDefault();
+                handleVolumeBooking(book.title, i, volumeName);
+                toggleVolumeDropdown(e);
+            };
+            dropdown.appendChild(item);
+        }
+    } else {
+        const item = document.createElement('span');
+        item.innerText = "একটিমাত্র খণ্ড";
+        item.style.padding = '12px 16px';
+        dropdown.appendChild(item);
+    }
+}
+
+// ⭐⭐ ড্রপডাউন টগল করার ফাংশন ⭐⭐
+function toggleVolumeDropdown(event) {
+    event.stopPropagation();
+    document.getElementById("volumeDropdown").classList.toggle("show");
+}
+
+
+// =====================================================================
+// ⭐ ৩. openModal ফাংশন (চূড়ান্ত পরিবর্তিত)
+// =====================================================================
+
+// 📖 পপআপ খোলে এবং ডেটা লোড করে (চূড়ান্ত পরিবর্তিত)
+function openModal(book) {
+    // 1. ডেটা লোড করা
+    document.getElementById('modalImage').src = `book image/${book.image}`;
+    document.getElementById('modalTitle').innerText = book.title;
+    
+    // 2. অনুবাদক কলামের জন্য বিশেষ হ্যান্ডলিং
+    const translatorData = book.translator && book.translator.trim() !== '' ? book.translator : null;
+    
+    // modal-details-grid এর HTML কন্টেন্ট তৈরি
+    const detailsGrid = document.querySelector('.modal-details-grid');
+    
+    // খণ্ড গণনা লজিক
+    const volumeText = book.volume;
+    let volumeCount = 0;
+    
+    const match = volumeText.match(/[০-৯\d]+/); 
+    
+    if (match) {
+        const englishNumberStr = convertBanglaNumberToEnglish(match[0]);
+        volumeCount = parseInt(englishNumberStr, 10);
+    }
+    
+    // ⭐ ১. মূল ডিটেইলস অংশ:
+    let baseDetailsHTML = `
+        <p><i class="fas fa-pen-nib"></i> <strong>লেখক:</strong> <span id="modalAuthor">${book.author}</span></p>
+        
+        ${translatorData ? 
+            `<p><i class="fas fa-language"></i> <strong>অনুবাদক:</strong> <span id="modalTranslator">${translatorData}</span></p>` 
+            : 
+            ''
+        }
+        
+        <p>
+            <i class="fas fa-book-open"></i> 
+            <strong>খণ্ড:</strong> 
+            <span id="modalVolume">${volumeText}</span>
+        </p>
+        
+        <p><i class="fas fa-building"></i> <strong>প্রকাশনী:</strong> <span id="modalPublisher">${book.publisher}</span></p>
+        <p><i class="fas fa-tags"></i> <strong>মূল্য:</strong> <span id="modalPrice">${book.price}</span></p>
+        <p><i class="fas fa-calendar-alt"></i> <strong>তারিখ:</strong> <span id="modalDate">${book.date}</span></p>
+        <p><i class="fas fa-bookmark"></i> <strong>ক্যাটাগরি:</strong> <span id="modalCategory">${book.category}</span></p>
+    `;
+    
+    // ⭐ ২. বুকিং এবং কমেন্ট বাটন কন্টেইনার তৈরি
+    let actionButtonsHTML = `
+        <hr class="modal-detail-list-divider">
+        <div id="bookingActions" style="grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
+            <div class="dropdown-container">
+                <button class="action-button primary" onclick="toggleVolumeDropdown(event)">
+                    <i class="fas fa-book-bookmark"></i> বুক করুন
+                </button>
+                <div id="volumeDropdown" class="dropdown-content">
+                    </div>
+            </div>
+            
+            <button class="action-button secondary" onclick="handleComment('${book.title}')">
+                <i class="fas fa-comment"></i> কমেন্ট
+            </button>
+        </div>
+        <div id="userBookedVolume" style="grid-column: 1 / -1; padding-top: 10px;"></div>
+    `;
+
+    // ৩. সব ডিটেইলস একত্রিত করা
+    detailsGrid.innerHTML = `
+        ${baseDetailsHTML} 
+        ${actionButtonsHTML}
+    `;
+
+    // ৪. খণ্ড ড্রপডাউন লোড করা
+    loadVolumeDropdown(book, volumeCount);
+
+    // ⭐ বুকিং স্ট্যাটাস লোড করা (লোকাল স্টোরেজ বাদ দেওয়া হয়েছে)
+    checkAndDisplayBookedVolume(book); 
+
+    // ৫. "একটু পড়ুন" এর জন্য ক্লিক ইভেন্ট সেট করা
+    const readSampleContainer = document.querySelector('.read-sample-container');
+    readSampleContainer.onclick = () => openSampleModal(book.readsamplelink, book.title); 
+
+    // ৬. পপআপ দেখানো
+    bookModal.classList.add('active');
+    
+    // ৭. পপআপের বাইরে ক্লিক করলে বন্ধ করা ও ড্রপডাউন লজিক
+    window.onclick = function(event) {
+        if (event.target == bookModal) {
+            closeModal();
+        }
+        if (!event.target.matches('.action-button')) {
+            const dropdowns = document.getElementsByClassName("dropdown-content");
+            for (let i = 0; i < dropdowns.length; i++) {
+                const openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    }
+}
+
+// ❌ পপআপ বন্ধ করে (এই ফাংশনে কোনো পরিবর্তন নেই)
+function closeModal() {
+    bookModal.classList.remove('active');
+    window.onclick = null; // ইভেন্ট লিসেনার মুছে ফেলা
+}
+
+// Esc key চাপলে পপআপ বন্ধ করার জন্য (এই ফাংশনে কোনো পরিবর্তন নেই)
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && bookModal.classList.contains('active')) {
+        closeModal();
+    }
+});
+// -----------------------------------------------------------
+// ✅ ৫. Read Sample (একটু পড়ুন) মডাল ফাংশন (লোকাল পাথ আপডেট ও ট্র্যাকিং)
+// -----------------------------------------------------------
+
+function openSampleModal(pdfFileName, bookTitle) {
+    
+    // 🛑 নিরাপত্তা চেক: ফাইলের নাম খালি কিনা
+    if (!pdfFileName || pdfFileName.trim() === '') {
+        console.error("❌ ERROR: pdfFileName is empty or null.");
+        alert("দুঃখিত, এই বইটির কোনো স্যাম্পল পৃষ্ঠা উপলব্ধ নেই।");
+        return;
+    }
+    
+    // PDF ফাইলটি সার্ভারের 'readsample' ফোল্ডার থেকে লোড করা হচ্ছে
+    // নিশ্চিত করুন যে আপনার ওয়েবসাইটে 'readsample' নামে একটি ফোল্ডার আছে
+    const pdfPath = `readsample/${pdfFileName}`; 
+    
+    // ⭐⭐ ১. কনসোলে চূড়ান্ত লোডিং পাথটি দেখুন ⭐⭐
+    console.log(`✅ Attempting to load PDF for book: ${bookTitle}`);
+    console.log(`🔎 PDF Path: ${pdfPath}`); 
+    
+    // 1. মডালের টাইটেল সেট করা
+    document.getElementById('sampleTitle').innerText = `একটু পড়ুন: ${bookTitle}`;
+    
+    // 2. সরাসরি PDF ভিউয়ারের সোর্স সেট করা
+    pdfViewer.src = pdfPath; 
+
+    // 3. স্যাম্পল পপআপ দেখানো
+    sampleModal.classList.add('active');
+    
+    // ⭐⭐ ২. iframe এর src সেট হওয়ার পরেও কনসোলে চেক করুন ⭐⭐
+    // এই পাথটি URL বারে সরাসরি প্রবেশ করালে ফাইলটি লোড হওয়া উচিত
+    setTimeout(() => {
+        console.log(`✅ PDF Viewer SRC set to: ${pdfViewer.src}`);
+    }, 100);
+}
+// ... closeSampleModal ফাংশনটি নিচে অপরিবর্তিত থাকবে ...
+
+function closeSampleModal() { // এই ফাংশনটি অপরিবর্তিত থাকবে
+    sampleModal.classList.remove('active');
+    pdfViewer.src = ''; 
 }

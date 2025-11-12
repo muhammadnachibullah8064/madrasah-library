@@ -104,6 +104,50 @@
 })();  // <- IIFE শেষ
 </script>
 
+<div id="bookModal" class="modal-overlay">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        
+        <div class="modal-body-simple">
+            
+            <div class="modal-body-simple">
+            
+    <div class="main-info-wrapper"> 
+        
+        <div class="modal-header-simple">
+            <img id="modalImage" src="" alt="বইয়ের ছবি" class="modal-book-img">
+        </div>
+        
+        <div class="right-side-details">
+            
+            <div class="header-text-and-sample">
+                <h2 id="modalTitle"></h2>
+                <div class="read-sample-container">
+                    <p class="read-sample-text">একটু পড়ুন</p>
+                    <i class="fas fa-long-arrow-alt-down read-sample-arrow"></i>
+                </div>
+            </div>
+            
+            <hr class="modal-divider-short"> <div class="modal-details-grid">
+                </div>
+            
+        </div>
+        </div>
+    <hr class="modal-divider"> <div class="modal-actions">
+        </div>
+    
+</div>
+    </div>
+</div>
+<div id="sampleModal" class="modal-overlay" onclick="if (event.target === this) closeSampleModal()"> 
+    <div class="modal-content large-modal">
+        <span class="close-btn" onclick="closeSampleModal()">&times;</span>
+        <h2 id="sampleTitle">বইটির স্যাম্পল</h2>
+        
+        <iframe id="pdfViewer" src="" frameborder="0"></iframe> 
+    </div>
+</div>
+
 <!-- script.js defer করে নিচে রাখো -->
 <script src="script.js" defer></script>
 </body>

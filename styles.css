@@ -845,3 +845,325 @@ header {
 .category-dropdown p:hover {
     background-color: #f0f0f0;
 }
+
+/* ==============================
+   BOOK DETAILS MODAL STYLES (চূড়ান্ত লেআউট)
+============================== */
+
+/* Modal Backdrop এবং Active State (অপরিবর্তিত) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); 
+    backdrop-filter: blur(5px);
+    display: none; 
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; 
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+/* Modal Content Box */
+.modal-content {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    padding: 30px; 
+    border-radius: 15px;
+    width: 90%;
+    max-width: 850px; /* ডিটেইলস পাশে রাখার জন্য প্রস্থ বাড়ানো হলো */
+    max-height: 90vh;
+    overflow-y: auto; 
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    transform: scale(0.95);
+    opacity: 0;
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* Close Button (অপরিবর্তিত) */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 30px;
+    font-weight: bold;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.85s;
+}
+
+/* ⭐⭐ নতুন Flex লজিক: ছবি ও ডানপাশের কন্টেন্ট পাশাপাশি আসবে ⭐⭐ */
+
+.main-info-wrapper {
+    display: flex; 
+    gap: 30px; 
+    align-items: flex-start;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* ডানপাশের কন্টেন্টকে উল্লম্বভাবে সাজানোর কন্টেইনার */
+.right-side-details {
+    display: flex;
+    flex-direction: column; /* নাম, বাটন, ডিটেইলসকে উল্লম্বভাবে রাখবে */
+    flex-grow: 1; /* ছবির পাশে থাকা সব জায়গা ব্যবহার করবে */
+}
+
+/* ছবি ব্লক */
+.modal-header-simple {
+    /* এটি এখন শুধুমাত্র ছবি ধারণ করে */
+    flex-shrink: 0; 
+}
+
+.modal-book-img {
+    width: 220px; /* ছবির প্রস্থ ঠিক করা হলো */
+    height: 330px; 
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* শিরোনাম এবং বাটন ব্লক (উল্লম্বভাবে) */
+.header-text-and-sample {
+    margin-bottom: 10px;
+}
+
+#modalTitle {
+    font-size: 26px; 
+    color: var(--accent);
+    margin: 0;
+    line-height: 1.2;
+}
+
+/* "একটু পড়ুন" বাটন স্টাইল */
+.read-sample-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; 
+    gap: 8px; 
+    padding: 8px 15px;
+    cursor: pointer;
+    background-color: #0099cc; 
+    color: white;
+    border-radius: 20px;
+    transition: background-color 0.2s;
+    width: fit-content; 
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    margin-top: 10px; 
+}
+
+.read-sample-container:hover {
+    background-color: #007799; 
+}
+
+.read-sample-text {
+    margin: 0;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+/* ⭐ ছোট বিভাজক: নাম/বাটনের পরে ডিটেইলসের আগে ⭐ */
+.modal-divider-short {
+    border: none;
+    height: 1px;
+    background-color: #eee;
+    margin: 15px 0;
+    width: 100%;
+}
+
+/* ⭐ মূল বিভাজক: অ্যাকশন বাটনের উপরে ⭐ */
+.modal-divider {
+    border: none;
+    height: 1px;
+    background-color: #ddd;
+    margin: 20px 0; 
+    width: 100%; 
+}
+
+/* ডিটেইলস গ্রিড: বাকি ডিটেইলসগুলি এখানে সাজানো হবে */
+.modal-details-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* দুটি কলামে ডিটেইলস দেখানোর জন্য */
+    gap: 12px 20px; 
+    text-align: left; 
+    /* এখানে flex-grow এর দরকার নেই, কারণ এটি right-side-details এর মধ্যে আছে */
+}
+
+.modal-details-grid p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.5;
+    display: flex; 
+    align-items: center;
+    gap: 10px;
+}
+
+/* ⭐ ১. ডিটেইলস গ্রিডের ভেতরের আইকনের (i ট্যাগ) স্টাইল ⭐ */
+.modal-details-grid i {
+    /* আইকনের রঙ পরিবর্তন করুন: আপনার ওয়েবসাইটের হাইলাইট কালার ব্যবহার করা হলো */
+    color: var(--accent); 
+    /* নিশ্চিত করুন যে এটি ঠিকমতো সারিবদ্ধ আছে */
+    width: 20px;
+    text-align: center;
+}
+
+/* ⭐ ২. ডিটেইলস গ্রিডের ভেতরের লেবেলের (strong ট্যাগ) স্টাইল ⭐ */
+.modal-details-grid strong {
+    /* লেবেল/প্রপার্টির নামগুলোর রঙ পরিবর্তন করুন: এটি ভ্যালু থেকে আলাদা দেখাবে */
+    color: #34495e; /* গাঢ় ধূসর-নীল রঙ */
+    font-weight: 600;
+    min-width: 80px; /* যাতে সব লেবেল একই প্রস্থে থাকে */
+}
+
+/* ... (অন্যান্য ডিটেইলস স্টাইল অপরিবর্তিত থাকবে) ... */
+
+/* Action Buttons (অপরিবর্তিত) */
+.modal-actions {
+    display: flex;
+    justify-content: center; 
+    gap: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #eee; 
+    width: 100%; 
+}
+
+/* ==============================
+   BOOK SAMPLE MODAL STYLES
+============================== */
+
+.read-sample-container {
+    /* এটিই এখন সেই বাটন যা হরাইজন্টাল দেখাবে */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* ⭐ বাম দিকে জায়গা রেখে শুরু করবে ⭐ */
+    gap: 8px;
+    padding: 8px 15px;
+    cursor: pointer;
+    background-color: #0099cc; /* বাটনটির রঙ পরিবর্তন করুন */
+    color: white;
+    border-radius: 20px; /* ক্যাপসুল আকার */
+    transition: background-color 0.2s;
+    width: fit-content; /* কন্টেন্টের আকার অনুযায়ী প্রস্থ হবে */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    
+    /* ⭐ বাটনটিকে নাম (h2) এর নিচে সামান্য দূরত্ব দেবে ⭐ */
+    margin-top: 10px; 
+}
+
+.read-sample-container:hover {
+    background-color: #007799; 
+}
+
+.read-sample-text {
+    margin: 0;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+/* Modal Content Box (পিডিএফ ভিউয়ারের জন্য) */
+.modal-content.large-modal { 
+    /* নিশ্চিত করুন যে এটি যথেষ্ট প্রশস্ত */
+    width: 90%; 
+    max-width: 900px; /* ⭐ এটি একটি বড় মান, যেমন 1100px ব্যবহার করুন ⭐ */
+    
+    /* নিশ্চিত করুন যে এটি যথেষ্ট লম্বা */
+    height: 90vh; /* স্ক্রিনের উচ্চতার 90% */
+    
+    margin: 5vh auto; 
+    
+    /* এই লাইনগুলো অপরিহার্য */
+    display: flex;
+    flex-direction: column;
+    /* ... বাকি স্টাইল অপরিবর্তিত ... */
+}
+
+#pdfViewer {
+    flex-grow: 1; /* ⭐ এটি সবচেয়ে জরুরি, বাকি উচ্চতা পূরণ করবে ⭐ */
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#sampleTitle { 
+    /* ⭐⭐ এই লাইনটি যুক্ত করুন ⭐⭐ */
+    text-align: center; 
+    /* ------------------------------ */
+    
+    color: var(--primary); /* বা আপনার বর্তমান রঙ */
+    margin: 5px 0 15px 0;
+    font-size: 22px;
+}
+
+/* ডিটেইলস গ্রিডের ভেতরে খণ্ড তালিকা থেকে মূল ডিটেইলসকে আলাদা করার জন্য দাগ */
+.modal-detail-list-divider {
+    border: none;
+    height: 1px;
+    background-color: #2806ec; /* হালকা ধূসর দাগ */
+    margin: 10px 0; /* উপরে নিচে ১০px দূরত্ব */
+    grid-column: 1 / -1; /* ⭐ এটি গ্রিডের সম্পূর্ণ প্রস্থ জুড়ে বিস্তৃত হবে ⭐ */
+}
+
+/* বুকিং অ্যাকশনের জন্য বাটন এবং ড্রপডাউন স্টাইল */
+.action-button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.action-button.primary {
+    background-color: #3498db; /* নীল রঙ */
+    color: white;
+}
+
+.action-button.secondary {
+    background-color: #f1c40f; /* হলুদ রঙ */
+    color: #333;
+}
+
+.dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 250px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 10; /* মডালের অন্যান্য উপাদানের উপরে থাকবে */
+    border-radius: 5px;
+    margin-top: 5px;
+    left: 0;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 0.9em;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown-content.show {
+    display: block;
+}
